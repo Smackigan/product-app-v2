@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { validateInput } from '../validators/Validation';
 
 function AddProduct() {
 	const [productData, setProductData] = useState({
@@ -20,39 +20,24 @@ function AddProduct() {
 		sku: '',
 		name: '',
 		price: '',
+		productType: '',
+		size: '',
+		weight: '',
+		height: '',
+		width: '',
+		length: '',
 	});
+
+	const [productType, setProductType] = useState('');
 
 	// Validation
 	function handleInputChange(event) {
 		const { name, value } = event.target;
 
-		// Validation for SKU
-		if (name === 'sku') {
-			if (value.trim() === '') {
-				setErrors({ ...errors, [name]: 'Please provide the SKU' });
-			} else {
-				setErrors({ ...errors, [name]: '' });
-			}
-		}
+		// Call the validateInput
+		const { errors: newErrors } = validateInput(name, value, errors);
 
-		// Validation for name
-		if (name === 'name') {
-			if (value.trim() === '') {
-				setErrors({ ...errors, [name]: 'Please provide the name' });
-			} else {
-				setErrors({ ...errors, [name]: '' });
-			}
-		}
-
-		// Validation for price
-		if (name === 'price') {
-			if (value.trim() === '') {
-				setErrors({ ...errors, [name]: 'Please provide the name' });
-			} else {
-				setErrors({ ...errors, [name]: '' });
-			}
-		}
-
+		setErrors(newErrors);
 		setProductData({ ...productData, [name]: value });
 	}
 
@@ -105,9 +90,7 @@ function AddProduct() {
 							value={productData.sku}
 							onChange={handleInputChange}
 						/>
-						<div
-							id="sku-error"
-							className="sku-error-message ms-2 my-auto text-danger">
+						<div className="sku-error-message ms-2 my-auto text-danger">
 							{errors.sku}
 						</div>
 					</div>
@@ -126,9 +109,7 @@ function AddProduct() {
 							value={productData.name}
 							onChange={handleInputChange}
 						/>
-						<div
-							id="name-error"
-							className="name-error-message ms-2 my-auto text-danger">
+						<div className="name-error-message ms-2 my-auto text-danger">
 							{errors.name}
 						</div>
 					</div>
@@ -147,12 +128,129 @@ function AddProduct() {
 							value={productData.price}
 							onChange={handleInputChange}
 						/>
-						<div
-							id="price-error"
-							className="price-error-message ms-2 my-auto text-danger">
+						<div className="price-error-message ms-2 my-auto text-danger">
 							{errors.price}
 						</div>
 					</div>
+
+					<div className="mb-3 d-flex">
+						<label
+							className="form-label col-2 my-auto"
+							htmlFor="productType">
+							Type Switcher
+						</label>
+						<select
+							className="form-control w-25"
+							id="productType"
+							name="productType"
+							value={productData.productType}
+							onChange={handleInputChange}>
+							<option value="">Choose product type</option>
+							<option value="DVD">DVD</option>
+							<option value="book">Book</option>
+							<option value="furniture">Furniture</option>
+						</select>
+					</div>
+
+					{productData.productType === 'DVD' && (
+						<div className="row option my-auto">
+							<p>Please, provide size of DVD in MB</p>
+							<div className="d-flex">
+								<label className="form-label col-2 my-auto">
+									Size (MB)
+								</label>
+								<input
+									className="form-control w-25"
+									type="number"
+									id="size"
+									name="size"
+									value={productData.size}
+									onChange={handleInputChange}
+								/>
+								<div className="size-error-message ms-2 my-auto text-danger">
+									{errors.size}
+								</div>
+							</div>
+						</div>
+					)}
+
+					{productData.productType === 'book' && (
+						<div className="row option my-auto">
+							<p>Please, provide weigth of the book</p>
+							<div className="d-flex">
+								<label className="form-label col-2 my-auto">
+									Weight (KG)
+								</label>
+								<input
+									className="form-control w-25"
+									type="number"
+									id="weight"
+									name="weight"
+									value={productData.weight}
+									onChange={handleInputChange}
+								/>
+								<div className="size-error-message ms-2 my-auto text-danger">
+									{errors.weight}
+								</div>
+							</div>
+						</div>
+					)}
+
+					{productData.productType === 'furniture' && (
+						<div className="row option my-auto">
+							<p>Please provide dimensions in HxWxL format:</p>
+							<div className="mb-3 d-flex row">
+								<label className="form-label col-2 my-auto">
+									Height (CM)
+								</label>
+								<input
+									className="form-control w-25"
+									type="number"
+									id="height"
+									name="height"
+									value={productData.height}
+									onChange={handleInputChange}
+								/>
+								<div className="ms-2 my-auto text-danger">
+									{errors.height}
+								</div>
+							</div>
+
+							<div className="mb-3 d-flex row">
+								<label className="form-label col-2 my-auto">
+									Width (CM)
+								</label>
+								<input
+									className="form-control w-25"
+									type="number"
+									id="width"
+									name="width"
+									value={productData.width}
+									onChange={handleInputChange}
+								/>
+								<div className="ms-2 my-auto text-danger">
+									{errors.width}
+								</div>
+							</div>
+
+							<div className="mb-3 d-flex row">
+								<label className="form-label col-2 my-auto">
+									Length (CM)
+								</label>
+								<input
+									className="form-control w-25"
+									type="number"
+									id="length"
+									name="length"
+									value={productData.length}
+									onChange={handleInputChange}
+								/>
+								<div className="ms-2 my-auto text-danger">
+									{errors.length}
+								</div>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</>
