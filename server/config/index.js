@@ -44,24 +44,26 @@ app.get('/', (req, res) => {
 });
 
 // Get all products
-app.get('/get', (req, res) => {
+app.get('/get-product', (req, res) => {
 	db.query('SELECT * FROM products', (err, result) => {
 		if (err) {
 			console.log(err);
+			res.status(500).json({ error: 'An error occurred' });
+			return;
 		}
-		res.send(result);
+		res.json(result);
 	});
 });
 
 // Create new product route
-app.post('/create', (req, res) => {
+app.post('/create-product', (req, res) => {
 	const sku = req.body.sku;
 	const name = req.body.name;
-	const price = req.body.price;
-	const size = req.body.size;
-	const weight = req.body.weight;
-	const dimensions = req.body.dimensions;
-	const type = req.body.type;
+	const value = req.body.price;
+	// const size = req.body.size;
+	// const weight = req.body.weight;
+	// const dimensions = req.body.dimensions;
+	// const type = req.body.type;
 
 	db.query(
 		'INSERT INTO products (SKU, Name, Price, Size, Weight, Dimensions, Type) VALUES (?,?,?,?,?,?,?)',
@@ -77,7 +79,7 @@ app.post('/create', (req, res) => {
 });
 
 // Delete product
-app.post('/delete', (req, res) => {
+app.post('/delete-product', (req, res) => {
 	const SKU = req.body.SKU;
 
 	db.query('DELETE FROM products WHERE SKU = ?', SKU, (err, result) => {

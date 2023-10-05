@@ -1,4 +1,4 @@
-function ProductCard({ product, size, weight }) {
+function ProductCard({ product }) {
 	return (
 		<div className="col-md-3 p-4 mb-4">
 			<div className="border border-2">
@@ -11,7 +11,6 @@ function ProductCard({ product, size, weight }) {
 								type="checkbox"
 								name={product.id}
 							/>
-							{product.id}
 						</label>
 					</div>
 					<div className="text-center lh-md">
@@ -19,10 +18,6 @@ function ProductCard({ product, size, weight }) {
 						<p className="card-title">{product.name}</p>
 						<p className="card-title">{product.price}</p>
 						<p className="card-title">{product.value}</p>
-						<p className="card-title">{size && 'Size: ' + size}</p>
-						<p className="card-title">
-							{weight && 'Weight: ' + weight}
-						</p>
 					</div>
 				</div>
 			</div>
