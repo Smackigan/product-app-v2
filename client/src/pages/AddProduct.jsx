@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { validateInput } from '../validators/Validation';
+import Input from '../components/Input';
+import DVDinput from '../components/DVDinput';
+import BookInput from '../components/BookInput';
+import FurnitureInput from '../components/FurnitureInput';
+import Button from '../components/Button';
 
 function AddProduct() {
 	const [productData, setProductData] = useState({
@@ -16,38 +21,44 @@ function AddProduct() {
 		length: '',
 	});
 
-	const [errors, setErrors] = useState({
+	const initialErrors = {
 		sku: '',
 		name: '',
 		price: '',
-		productType: '',
 		size: '',
 		weight: '',
 		height: '',
 		width: '',
 		length: '',
-	});
+		// Add more fields as needed
+	};
 
-	const [productType, setProductType] = useState('');
+	const [errors, setErrors] = useState(initialErrors);
 
-	// Validation
+	// Collect data from inputs
 	function handleInputChange(event) {
 		const { name, value } = event.target;
 
 		// Call the validateInput
 		const { errors: newErrors } = validateInput(name, value, errors);
 
+		// Update the errors state
 		setErrors(newErrors);
 		setProductData({ ...productData, [name]: value });
 	}
 
-	function handleSubmit(event) {
+	// Submit data to API
+	function onHandleSubmit(event) {
 		event.preventDefault();
 
 		// Check if there are any errors
-		if (Object.keys(errors).length === 0) {
+		const errorKeys = Object.keys(errors);
+		const hasErrors = errorKeys.some((key) => errors[key] !== '');
+
+		if (!hasErrors) {
 			// If no errors, proceed with form submission
 
+			sendDataToAPI(productData);
 			console.log('Form submitted successfully');
 		} else {
 			// If there are errors, display a message
@@ -55,88 +66,96 @@ function AddProduct() {
 		}
 	}
 
+	function onHandleCancel() {}
+
+	// useEffect(() => {
+	// 	console.log('Updated productData2.0:', productData);
+	// }, [productData]);
+
+	useEffect(() => {
+		console.log('Updated error data:', errors);
+	}, [errors]);
+
+	// Send
+	async function sendDataToAPI(data) {
+		try {
+			const response = await fetch(
+				'http://scandi-react/index.php?endpoint=/api/add-product',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error(
+					`Request failed with status ${response.status}`
+				);
+			}
+		} catch (error) {
+			console.error('Error sending data to API:', error);
+		}
+
+		console.log('Data to send to API:', data);
+	}
+
 	return (
 		<>
 			<div className="app">
-				<form onSubmit={handleSubmit} />
 				<header>
 					<div className="d-flex justify-content-between my-5 px-4 border-bottom border-1 border-secondary">
 						<h2 className="px-4 mb-4">Product Add</h2>
 						<div className="btns px-4">
-							<Link to="/add-product" className="btn btn-primary">
-								Save
-							</Link>
-							<button
+							<Button
+								onClick={onHandleSubmit}
+								label="Save"
+								className="btn btn-primary"
+							/>
+							<Button
+								onClick={onHandleCancel}
+								label="Cancel"
 								className="btn btn-danger"
-								id="delete-product-btn">
-								Cancel
-							</button>
+							/>
 						</div>
 					</div>
 				</header>
 
-				<div className="ms-5">
-					<div className="mb-3 d-flex">
-						<label
-							className="form-label col-2 my-auto"
-							htmlFor="sku">
-							SKU
-						</label>
-						<input
-							className="form-control w-25"
-							type="text"
-							id="sku"
-							name="sku"
-							value={productData.sku}
-							onChange={handleInputChange}
-						/>
-						<div className="sku-error-message ms-2 my-auto text-danger">
-							{errors.sku}
-						</div>
-					</div>
+				<form className="ms-5" onSubmit={onHandleSubmit}>
+					<Input
+						type="text"
+						id="sku"
+						name="sku"
+						value={productData.sku}
+						onChange={handleInputChange}
+						errors={errors.sku}
+						placeholder="SKU"
+					/>
+
+					<Input
+						type="text"
+						id="name"
+						name="name"
+						value={productData.name}
+						onChange={handleInputChange}
+						errors={errors.name}
+						placeholder="Name"
+					/>
+
+					<Input
+						type="number"
+						id="price"
+						name="price"
+						value={productData.price}
+						onChange={handleInputChange}
+						errors={errors.price}
+						placeholder="Price"
+					/>
 
 					<div className="mb-3 d-flex">
-						<label
-							className="form-label col-2 my-auto"
-							htmlFor="name">
-							Name
-						</label>
-						<input
-							className="form-control w-25"
-							type="text"
-							id="name"
-							name="name"
-							value={productData.name}
-							onChange={handleInputChange}
-						/>
-						<div className="name-error-message ms-2 my-auto text-danger">
-							{errors.name}
-						</div>
-					</div>
-
-					<div className="mb-3 d-flex">
-						<label
-							className="form-label col-2 my-auto"
-							htmlFor="price">
-							Price
-						</label>
-						<input
-							className="form-control w-25"
-							type="number"
-							id="price"
-							name="price"
-							value={productData.price}
-							onChange={handleInputChange}
-						/>
-						<div className="price-error-message ms-2 my-auto text-danger">
-							{errors.price}
-						</div>
-					</div>
-
-					<div className="mb-3 d-flex">
-						<label
-							className="form-label col-2 my-auto"
-							htmlFor="productType">
+						<label className="form-label col-2 my-auto">
 							Type Switcher
 						</label>
 						<select
@@ -153,105 +172,29 @@ function AddProduct() {
 					</div>
 
 					{productData.productType === 'DVD' && (
-						<div className="row option my-auto">
-							<p>Please, provide size of DVD in MB</p>
-							<div className="d-flex">
-								<label className="form-label col-2 my-auto">
-									Size (MB)
-								</label>
-								<input
-									className="form-control w-25"
-									type="number"
-									id="size"
-									name="size"
-									value={productData.size}
-									onChange={handleInputChange}
-								/>
-								<div className="size-error-message ms-2 my-auto text-danger">
-									{errors.size}
-								</div>
-							</div>
-						</div>
+						<DVDinput
+							productData={productData}
+							errors={errors.size}
+							handleInputChange={handleInputChange}
+						/>
 					)}
 
 					{productData.productType === 'book' && (
-						<div className="row option my-auto">
-							<p>Please, provide weigth of the book</p>
-							<div className="d-flex">
-								<label className="form-label col-2 my-auto">
-									Weight (KG)
-								</label>
-								<input
-									className="form-control w-25"
-									type="number"
-									id="weight"
-									name="weight"
-									value={productData.weight}
-									onChange={handleInputChange}
-								/>
-								<div className="size-error-message ms-2 my-auto text-danger">
-									{errors.weight}
-								</div>
-							</div>
-						</div>
+						<BookInput
+							productData={productData}
+							errors={errors.weight}
+							handleInputChange={handleInputChange}
+						/>
 					)}
 
 					{productData.productType === 'furniture' && (
-						<div className="row option my-auto">
-							<p>Please provide dimensions in HxWxL format:</p>
-							<div className="mb-3 d-flex row">
-								<label className="form-label col-2 my-auto">
-									Height (CM)
-								</label>
-								<input
-									className="form-control w-25"
-									type="number"
-									id="height"
-									name="height"
-									value={productData.height}
-									onChange={handleInputChange}
-								/>
-								<div className="ms-2 my-auto text-danger">
-									{errors.height}
-								</div>
-							</div>
-
-							<div className="mb-3 d-flex row">
-								<label className="form-label col-2 my-auto">
-									Width (CM)
-								</label>
-								<input
-									className="form-control w-25"
-									type="number"
-									id="width"
-									name="width"
-									value={productData.width}
-									onChange={handleInputChange}
-								/>
-								<div className="ms-2 my-auto text-danger">
-									{errors.width}
-								</div>
-							</div>
-
-							<div className="mb-3 d-flex row">
-								<label className="form-label col-2 my-auto">
-									Length (CM)
-								</label>
-								<input
-									className="form-control w-25"
-									type="number"
-									id="length"
-									name="length"
-									value={productData.length}
-									onChange={handleInputChange}
-								/>
-								<div className="ms-2 my-auto text-danger">
-									{errors.length}
-								</div>
-							</div>
-						</div>
+						<FurnitureInput
+							productData={productData}
+							errors={errors}
+							handleInputChange={handleInputChange}
+						/>
 					)}
-				</div>
+				</form>
 			</div>
 		</>
 	);

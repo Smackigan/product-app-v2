@@ -14,17 +14,18 @@ function ProductList({ product }) {
 
 	// Load products from DB
 
-	// const apiBaseUrl = 'http://localhost:8080';
-
 	const loadProducts = async () => {
 		try {
-			const response = await fetch(`${API_BASE_URL}/get-product`);
+			const response = await fetch(
+				'http://scandi-react/index.php?endpoint=/api/get-product'
+			);
 			if (!response.ok) {
 				throw new Error(
 					`Request failed with status ${response.status}`
 				);
 			}
 			const data = await response.json();
+			console.log(data);
 			setProducts(data);
 		} catch (error) {
 			console.error('Error fetching products:', error);
