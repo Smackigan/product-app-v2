@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { API_BASE_URL } from '../config';
-// import { validateInput } from '../validators/Validation';
 import { validateInput } from '../validators/Validation';
 import Input from '../components/Input';
 import DVDinput from '../components/DVDinput';
@@ -9,6 +6,7 @@ import BookInput from '../components/BookInput';
 import FurnitureInput from '../components/FurnitureInput';
 import Button from '../components/Button';
 import { resetErrorsAndProductData } from '../components/ResetFunction';
+import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -136,7 +134,11 @@ function AddProduct() {
 		}
 	};
 
-	function onHandleCancel() {}
+	// Cancel and return to homepage
+	const navigate = useNavigate();
+	function onHandleCancel() {
+		navigate('/');
+	}
 
 	useEffect(() => {
 		console.log('Products data:', productData);
