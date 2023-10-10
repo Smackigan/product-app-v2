@@ -7,12 +7,12 @@ function BookInput({ productData, errors, handleInputChange }) {
 			<p>Please, provide weigth of the book</p>
 			<Input
 				className="form-control w-25"
-				type="number"
+				type="text"
 				id="weight"
 				name="weight"
 				value={productData.weight}
 				onChange={handleInputChange}
-				placeholder="Weight"
+				placeholder="Weight (KG)"
 				errors={errors}
 			/>
 		</div>

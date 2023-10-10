@@ -7,12 +7,12 @@ function DVDinput({ productData, errors, handleInputChange }) {
 			<p>Please, provide size of DVD in MB</p>
 			<Input
 				className="form-control w-25"
-				type="number"
+				type="text"
 				id="size"
 				name="size"
 				value={productData.size}
 				onChange={handleInputChange}
-				placeholder="Size"
+				placeholder="Size (MB)"
 				errors={errors}
 			/>
 		</div>

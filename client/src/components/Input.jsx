@@ -1,6 +1,15 @@
 import React from 'react';
 
-function Input({ type, id, name, value, onChange, errors, placeholder }) {
+function Input({
+	type,
+	id,
+	name,
+	value,
+	onChange,
+	errors,
+	submitted,
+	placeholder,
+}) {
 	return (
 		<div className="mb-3 d-flex">
 			<label className="form-label col-2 my-auto">{placeholder}</label>
@@ -12,7 +21,9 @@ function Input({ type, id, name, value, onChange, errors, placeholder }) {
 				value={value}
 				onChange={onChange}
 			/>
-			{errors && <div className="ms-2 my-auto">{errors}</div>}
+			{submitted && errors && (
+				<div className="ms-2 my-auto">{errors}</div>
+			)}
 		</div>
 	);
 }

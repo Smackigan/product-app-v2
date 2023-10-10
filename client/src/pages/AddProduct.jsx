@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+// import { validateInput } from '../validators/Validation';
 import { validateInput } from '../validators/Validation';
 import Input from '../components/Input';
 import DVDinput from '../components/DVDinput';
 import BookInput from '../components/BookInput';
 import FurnitureInput from '../components/FurnitureInput';
 import Button from '../components/Button';
+import { resetErrorsAndProductData } from '../components/ResetFunction';
+
+import axios from 'axios';
 
 function AddProduct() {
 	const [productData, setProductData] = useState({
@@ -30,77 +34,151 @@ function AddProduct() {
 		height: '',
 		width: '',
 		length: '',
-		// Add more fields as needed
 	};
 
+	// - All fields are mandatory for submission, missing values should trigger notification “Please, submit required data”
+	// - Implement input field value validation, invalid data must trigger notification “Please, provide the data of indicated type”
+
 	const [errors, setErrors] = useState(initialErrors);
+	const [submitted, setSubmitted] = useState(false);
 
 	// Collect data from inputs
-	function handleInputChange(event) {
-		const { name, value } = event.target;
+	// const handleInputChange = (e) => {
+	// 	setSubmitted(true);
+	// 	const { name, value } = e.target;
 
-		// Call the validateInput
-		const { errors: newErrors } = validateInput(name, value, errors);
+	// 	// Assuming you have a state variable for productType
+	// 	const productType = productData.productType;
 
-		// Update the errors state
-		setErrors(newErrors);
-		setProductData({ ...productData, [name]: value });
-	}
+	// 	// Validate the input based on productType
+	// 	const validation = validateInput(name, value, errors, productType);
 
-	// Submit data to API
-	function onHandleSubmit(event) {
+	// 	// Update the errors state with the validation result
+	// 	setErrors(validation.errors);
+
+	// 	// Update the productData state with the new input value
+	// 	setProductData({
+	// 		...productData,
+	// 		[name]: value,
+	// 	});
+	// };
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+		// console.log(e.target);
+
+		// Validate the input based on the field name
+		const validation = validateInput(name, value);
+
+		// Update the errors state with the validation result
+		setErrors({ ...errors, [name]: validation });
+
+		resetProductDataForProductType(productData.productType);
+
+		// Update the productData state with the new input value
+		setProductData((prevProductData) => ({
+			...prevProductData,
+			[name]: value,
+		}));
+	};
+
+	// Save btn. Submit data to API
+	const onHandleSubmit = async (event) => {
 		event.preventDefault();
 
-		// Check if there are any errors
-		const errorKeys = Object.keys(errors);
-		const hasErrors = errorKeys.some((key) => errors[key] !== '');
+		setSubmitted(false);
+
+		// Check for empty string
+		const hasErrors = Object.values(errors).some((error) => error !== '');
+		console.log(hasErrors);
 
 		if (!hasErrors) {
-			// If no errors, proceed with form submission
+			console.log('Submitting data:', productData);
 
-			sendDataToAPI(productData);
-			console.log('Form submitted successfully');
-		} else {
-			// If there are errors, display a message
-			console.error('Form submission failed due to errors');
+			axios
+				.post(
+					'http://scandi-react/index.php?endpoint=/api/add-product',
+					productData
+				)
+				.then((response) => {
+					console.log('Response from server:', response.data);
+				})
+				.catch((error) => {
+					console.error('Error while submitting data:', error);
+				});
 		}
-	}
+	};
 
 	function onHandleCancel() {}
 
-	// useEffect(() => {
-	// 	console.log('Updated productData2.0:', productData);
-	// }, [productData]);
+	useEffect(() => {
+		console.log('Products data:', productData);
+	}, [productData]);
 
 	useEffect(() => {
-		console.log('Updated error data:', errors);
+		console.log('Errors array:', errors);
 	}, [errors]);
 
-	// Send
-	async function sendDataToAPI(data) {
-		try {
-			const response = await fetch(
-				'http://scandi-react/index.php?endpoint=/api/add-product',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(data),
-				}
-			);
-
-			if (!response.ok) {
-				throw new Error(
-					`Request failed with status ${response.status}`
-				);
-			}
-		} catch (error) {
-			console.error('Error sending data to API:', error);
+	const resetErrorsForProductType = (productType) => {
+		const updatedErrors = { ...errors };
+		switch (productType) {
+			case 'DVD':
+				updatedErrors.weight = '';
+				updatedErrors.height = '';
+				updatedErrors.width = '';
+				updatedErrors.length = '';
+				break;
+			case 'book':
+				updatedErrors.size = '';
+				updatedErrors.height = '';
+				updatedErrors.width = '';
+				updatedErrors.length = '';
+				break;
+			case 'furniture':
+				updatedErrors.size = '';
+				updatedErrors.weight = '';
+				break;
+			default:
+				break;
 		}
+		setErrors(updatedErrors);
+	};
 
-		console.log('Data to send to API:', data);
-	}
+	useEffect(() => {
+		const resetErrors = () => {
+			resetErrorsForProductType(productData.productType);
+		};
+		resetErrors();
+	}, [productData.productType]);
+
+	// Reset the product data inputs state
+	const resetProductDataForProductType = (productType) => {
+		setProductData((prevProductData) => {
+			const updatedProductData = { ...prevProductData };
+
+			switch (productType) {
+				case 'DVD':
+					updatedProductData.weight = '';
+					updatedProductData.height = '';
+					updatedProductData.width = '';
+					updatedProductData.length = '';
+					break;
+				case 'book':
+					updatedProductData.size = '';
+					updatedProductData.height = '';
+					updatedProductData.width = '';
+					updatedProductData.length = '';
+					break;
+				case 'furniture':
+					updatedProductData.size = '';
+					updatedProductData.weight = '';
+					break;
+				default:
+					break;
+			}
+
+			return updatedProductData;
+		});
+	};
 
 	return (
 		<>
@@ -132,6 +210,7 @@ function AddProduct() {
 						onChange={handleInputChange}
 						errors={errors.sku}
 						placeholder="SKU"
+						required
 					/>
 
 					<Input
@@ -142,6 +221,7 @@ function AddProduct() {
 						onChange={handleInputChange}
 						errors={errors.name}
 						placeholder="Name"
+						required
 					/>
 
 					<Input
@@ -152,6 +232,7 @@ function AddProduct() {
 						onChange={handleInputChange}
 						errors={errors.price}
 						placeholder="Price"
+						required
 					/>
 
 					<div className="mb-3 d-flex">
@@ -163,7 +244,8 @@ function AddProduct() {
 							id="productType"
 							name="productType"
 							value={productData.productType}
-							onChange={handleInputChange}>
+							onChange={handleInputChange}
+							required>
 							<option value="">Choose product type</option>
 							<option value="DVD">DVD</option>
 							<option value="book">Book</option>

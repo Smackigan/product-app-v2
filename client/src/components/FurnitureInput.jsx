@@ -7,7 +7,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 			<p>Please provide dimensions in HxWxL format:</p>
 			<Input
 				className="form-control w-25"
-				type="number"
+				type="text"
 				id="height"
 				name="height"
 				value={productData.height}
@@ -17,7 +17,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 			/>
 			<Input
 				className="form-control w-25"
-				type="number"
+				type="text"
 				id="width"
 				name="width"
 				value={productData.width}
@@ -27,7 +27,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 			/>
 			<Input
 				className="form-control w-25"
-				type="number"
+				type="text"
 				id="length"
 				name="length"
 				value={productData.length}
