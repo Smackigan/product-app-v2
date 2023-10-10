@@ -41,6 +41,7 @@ function AddProduct() {
 
 	const [errors, setErrors] = useState(initialErrors);
 	const [submitted, setSubmitted] = useState(false);
+	const [isSkuNotUnique, setIsSkuNotUnique] = useState(false);
 
 	// Collect data from inputs
 	// const handleInputChange = (e) => {
@@ -85,7 +86,12 @@ function AddProduct() {
 	const onHandleSubmit = async (event) => {
 		event.preventDefault();
 
-		setSubmitted(false);
+		// Check SKU uniqueness
+		const isSkuUnique = await checkSkuUnique(productData.sku);
+
+		if (!isSkuUnique) {
+			return;
+		}
 
 		// Check for empty string
 		const hasErrors = Object.values(errors).some((error) => error !== '');
@@ -105,6 +111,28 @@ function AddProduct() {
 				.catch((error) => {
 					console.error('Error while submitting data:', error);
 				});
+		}
+	};
+
+	// Check SKU uniqueness
+	const checkSkuUnique = async (sku) => {
+		try {
+			const response = await axios.get(
+				`http://scandi-react/index.php?action=check-sku&sku=${sku}`
+			);
+			const isUnique = response.data;
+
+			if (!isUnique) {
+				setIsSkuNotUnique(true); // SKU is not unique
+			} else {
+				setIsSkuNotUnique(false); // SKU is unique
+			}
+
+			return isUnique;
+		} catch (error) {
+			console.error('Error SKU unique:', error);
+			setIsSkuNotUnique(false);
+			return false;
 		}
 	};
 
@@ -210,6 +238,7 @@ function AddProduct() {
 						onChange={handleInputChange}
 						errors={errors.sku}
 						placeholder="SKU"
+						isSkuNotUnique={isSkuNotUnique}
 						required
 					/>
 

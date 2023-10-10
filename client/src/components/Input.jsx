@@ -9,6 +9,7 @@ function Input({
 	errors,
 	submitted,
 	placeholder,
+	isSkuNotUnique,
 }) {
 	return (
 		<div className="mb-3 d-flex">
@@ -20,10 +21,12 @@ function Input({
 				name={name}
 				value={value}
 				onChange={onChange}
+				required
 			/>
-			{submitted && errors && (
-				<div className="ms-2 my-auto">{errors}</div>
+			{isSkuNotUnique && (
+				<div className="ms-2 my-auto">SKU is not unique</div>
 			)}
+			{errors && <div className="ms-2 my-auto">{errors}</div>}
 		</div>
 	);
 }
