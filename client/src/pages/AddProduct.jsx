@@ -40,27 +40,8 @@ function AddProduct() {
 	const [errors, setErrors] = useState(initialErrors);
 	const [submitted, setSubmitted] = useState(false);
 	const [isSkuNotUnique, setIsSkuNotUnique] = useState(false);
+	const [serverErrors, setServerErrors] = useState({});
 
-	// Collect data from inputs
-	// const handleInputChange = (e) => {
-	// 	setSubmitted(true);
-	// 	const { name, value } = e.target;
-
-	// 	// Assuming you have a state variable for productType
-	// 	const productType = productData.productType;
-
-	// 	// Validate the input based on productType
-	// 	const validation = validateInput(name, value, errors, productType);
-
-	// 	// Update the errors state with the validation result
-	// 	setErrors(validation.errors);
-
-	// 	// Update the productData state with the new input value
-	// 	setProductData({
-	// 		...productData,
-	// 		[name]: value,
-	// 	});
-	// };
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 		// console.log(e.target);
@@ -84,16 +65,8 @@ function AddProduct() {
 	const onHandleSubmit = async (event) => {
 		event.preventDefault();
 
-		// Check SKU uniqueness
-		const isSkuUnique = await checkSkuUnique(productData.sku);
-
-		if (!isSkuUnique) {
-			return;
-		}
-
 		// Check for empty string
 		const hasErrors = Object.values(errors).some((error) => error !== '');
-		console.log(hasErrors);
 
 		if (!hasErrors) {
 			axios
@@ -106,33 +79,15 @@ function AddProduct() {
 					console.log(response.data.success);
 
 					if (response.data.success) {
-						navigate('/'); // Replace with the correct path
+						setServerErrors({});
+						navigate('/');
+					} else {
+						setServerErrors(response.data.errors || {});
 					}
 				})
 				.catch((error) => {
 					console.error('Error while submitting data:', error);
 				});
-		}
-	};
-
-	// Check SKU uniqueness
-	const checkSkuUnique = async (sku) => {
-		try {
-			const response = await axios.get(
-				`http://scandi-react/index.php?action=check-sku&sku=${sku}`
-			);
-			const isUnique = response.data;
-
-			if (!isUnique) {
-				setIsSkuNotUnique(true); // SKU is not unique
-			} else {
-				setIsSkuNotUnique(false); // SKU is unique
-			}
-			return isUnique;
-		} catch (error) {
-			console.error('Error SKU unique:', error);
-			setIsSkuNotUnique(false);
-			return false;
 		}
 	};
 
@@ -240,8 +195,9 @@ function AddProduct() {
 					value={productData.sku}
 					onChange={handleInputChange}
 					errors={errors.sku}
+					serverErrors={serverErrors.sku}
 					placeholder="SKU"
-					isSkuNotUnique={isSkuNotUnique}
+					// isSkuNotUnique={isSkuNotUnique}
 					required
 				/>
 
@@ -252,6 +208,7 @@ function AddProduct() {
 					value={productData.name}
 					onChange={handleInputChange}
 					errors={errors.name}
+					serverErrors={serverErrors.name}
 					placeholder="Name"
 					required
 				/>
@@ -263,6 +220,7 @@ function AddProduct() {
 					value={productData.price}
 					onChange={handleInputChange}
 					errors={errors.price}
+					serverErrors={serverErrors.price}
 					placeholder="Price"
 					required
 				/>
@@ -289,6 +247,7 @@ function AddProduct() {
 					<DVDinput
 						productData={productData}
 						errors={errors.size}
+						serverErrors={serverErrors.size}
 						handleInputChange={handleInputChange}
 					/>
 				)}
@@ -297,6 +256,7 @@ function AddProduct() {
 					<BookInput
 						productData={productData}
 						errors={errors.weight}
+						serverErrors={serverErrors.weight}
 						handleInputChange={handleInputChange}
 					/>
 				)}
@@ -305,6 +265,7 @@ function AddProduct() {
 					<FurnitureInput
 						productData={productData}
 						errors={errors}
+						serverErrors={serverErrors}
 						handleInputChange={handleInputChange}
 					/>
 				)}

@@ -10,7 +10,10 @@ function Input({
 	submitted,
 	placeholder,
 	isSkuNotUnique,
+	serverErrors,
 }) {
+	const displayErrors = errors || serverErrors;
+
 	return (
 		<div className="mb-3 d-flex">
 			<label className="form-label col-2 my-auto">{placeholder}</label>
@@ -23,10 +26,10 @@ function Input({
 				onChange={onChange}
 				required
 			/>
-			{isSkuNotUnique && (
-				<div className="ms-2 my-auto">SKU is not unique</div>
+
+			{displayErrors && (
+				<div className="ms-2 my-auto">{displayErrors}</div>
 			)}
-			{errors && <div className="ms-2 my-auto">{errors}</div>}
 		</div>
 	);
 }

@@ -1,7 +1,12 @@
 import React from 'react';
 import Input from './Input';
 
-function FurnitureInput({ productData, errors, handleInputChange }) {
+function FurnitureInput({
+	productData,
+	errors,
+	handleInputChange,
+	serverErrors,
+}) {
 	return (
 		<div className="row option my-auto">
 			<p>Please provide dimensions in HxWxL format:</p>
@@ -14,6 +19,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 				onChange={handleInputChange}
 				placeholder="Height (CM)"
 				errors={errors.height}
+				serverErrors={serverErrors.height}
 			/>
 			<Input
 				className="form-control w-25"
@@ -24,6 +30,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 				onChange={handleInputChange}
 				placeholder="Width (CM)"
 				errors={errors.width}
+				serverErrors={serverErrors.width}
 			/>
 			<Input
 				className="form-control w-25"
@@ -34,6 +41,7 @@ function FurnitureInput({ productData, errors, handleInputChange }) {
 				onChange={handleInputChange}
 				placeholder="Length (CM)"
 				errors={errors.length}
+				serverErrors={serverErrors.length}
 			/>
 		</div>
 	);

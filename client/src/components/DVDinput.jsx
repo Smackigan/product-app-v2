@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from './Input';
 
-function DVDinput({ productData, errors, handleInputChange }) {
+function DVDinput({ productData, errors, handleInputChange, serverErrors }) {
 	return (
 		<div className="row option my-auto">
 			<p>Please, provide size of DVD in MB</p>
@@ -14,6 +14,7 @@ function DVDinput({ productData, errors, handleInputChange }) {
 				onChange={handleInputChange}
 				placeholder="Size (MB)"
 				errors={errors}
+				serverErrors={serverErrors}
 			/>
 		</div>
 	);

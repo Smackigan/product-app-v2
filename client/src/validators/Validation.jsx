@@ -23,21 +23,21 @@
 // };
 
 export const validateInput = (name, value) => {
-	const validationMessages = {
-		sku: 'Please provide a valid SKU',
-		name: 'Please provide a valid Name',
-		price: 'Please provide a valid Price',
-	};
+	// const validationMessages = {
+	// 	sku: 'Please provide a valid SKU',
+	// 	name: 'Please provide a valid Name',
+	// 	price: 'Please provide a valid Price',
+	// };
 
 	const patterns = {
 		sku: /^[a-zA-Z0-9 ,._:-]/,
-		name: /^[a-zA-Z0-9 ,.'-]+$/,
+		name: /^[a-zA-Z0-9 ,./'-]+$/,
 		price: /^\d+(\.\d{0,5})?$/,
-		size: /^[0-9A-Za-z\s.,_-]*$/,
-		weight: /^[0-9A-Za-z\s.,_-]*$/,
-		height: /^[0-9A-Za-z\s.,_-]*$/,
-		length: /^[0-9A-Za-z\s.,_-]*$/,
-		width: /^[0-9A-Za-z\s.,_-]*$/,
+		size: /^[0-9A-Za-z\s.,/-]*$/,
+		weight: /^[0-9A-Za-z\s.,/-]*$/,
+		height: /^[0-9A-Za-z\s.,/-]*$/,
+		length: /^[0-9A-Za-z\s.,/-]*$/,
+		width: /^[0-9A-Za-z\s.,/-]*$/,
 	};
 
 	if (name === 'productType') {

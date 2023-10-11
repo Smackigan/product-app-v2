@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from './Input';
 
-function BookInput({ productData, errors, handleInputChange }) {
+function BookInput({ productData, errors, handleInputChange, serverErrors }) {
 	return (
 		<div className="row option my-auto">
 			<p>Please, provide weigth of the book</p>
@@ -14,6 +14,7 @@ function BookInput({ productData, errors, handleInputChange }) {
 				onChange={handleInputChange}
 				placeholder="Weight (KG)"
 				errors={errors}
+				serverErrors={serverErrors}
 			/>
 		</div>
 	);
