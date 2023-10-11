@@ -1,4 +1,4 @@
-function ProductCard({ product }) {
+function ProductCard({ product, isSelected, onCheckboxChange }) {
 	return (
 		<div className="col-md-3 p-4 mb-4">
 			<div className="border border-2">
@@ -7,7 +7,8 @@ function ProductCard({ product }) {
 						<label className="form-check-inline">
 							<input
 								className="delete-checkbox form-check-input"
-								// onClick={handleCheck}
+								checked={isSelected}
+								onChange={() => onCheckboxChange(product.id)}
 								type="checkbox"
 								name={product.id}
 							/>

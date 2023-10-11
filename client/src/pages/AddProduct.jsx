@@ -96,8 +96,6 @@ function AddProduct() {
 		console.log(hasErrors);
 
 		if (!hasErrors) {
-			console.log('Submitting data:', productData);
-
 			axios
 				.post(
 					'http://scandi-react/index.php?endpoint=/api/add-product',
@@ -105,6 +103,11 @@ function AddProduct() {
 				)
 				.then((response) => {
 					console.log('Response from server:', response.data);
+					console.log(response.data.success);
+
+					if (response.data.success) {
+						navigate('/'); // Replace with the correct path
+					}
 				})
 				.catch((error) => {
 					console.error('Error while submitting data:', error);
@@ -125,7 +128,6 @@ function AddProduct() {
 			} else {
 				setIsSkuNotUnique(false); // SKU is unique
 			}
-
 			return isUnique;
 		} catch (error) {
 			console.error('Error SKU unique:', error);
@@ -211,105 +213,103 @@ function AddProduct() {
 	};
 
 	return (
-		<>
-			<div className="app">
-				<header>
-					<div className="d-flex justify-content-between my-5 px-4 border-bottom border-1 border-secondary">
-						<h2 className="px-4 mb-4">Product Add</h2>
-						<div className="btns px-4">
-							<Button
-								onClick={onHandleSubmit}
-								label="Save"
-								className="btn btn-primary"
-							/>
-							<Button
-								onClick={onHandleCancel}
-								label="Cancel"
-								className="btn btn-danger"
-							/>
-						</div>
+		<div className="app">
+			<header>
+				<div className="d-flex justify-content-between my-5 px-4 border-bottom border-1 border-secondary">
+					<h2 className="px-4 mb-4">Product Add</h2>
+					<div className="btns px-4">
+						<Button
+							onClick={onHandleSubmit}
+							label="Save"
+							className="btn btn-primary"
+						/>
+						<Button
+							onClick={onHandleCancel}
+							label="Cancel"
+							className="btn btn-danger"
+						/>
 					</div>
-				</header>
+				</div>
+			</header>
 
-				<form className="ms-5" onSubmit={onHandleSubmit}>
-					<Input
-						type="text"
-						id="sku"
-						name="sku"
-						value={productData.sku}
+			<form className="ms-5" onSubmit={onHandleSubmit}>
+				<Input
+					type="text"
+					id="sku"
+					name="sku"
+					value={productData.sku}
+					onChange={handleInputChange}
+					errors={errors.sku}
+					placeholder="SKU"
+					isSkuNotUnique={isSkuNotUnique}
+					required
+				/>
+
+				<Input
+					type="text"
+					id="name"
+					name="name"
+					value={productData.name}
+					onChange={handleInputChange}
+					errors={errors.name}
+					placeholder="Name"
+					required
+				/>
+
+				<Input
+					type="number"
+					id="price"
+					name="price"
+					value={productData.price}
+					onChange={handleInputChange}
+					errors={errors.price}
+					placeholder="Price"
+					required
+				/>
+
+				<div className="mb-3 d-flex">
+					<label className="form-label col-2 my-auto">
+						Type Switcher
+					</label>
+					<select
+						className="form-control w-25"
+						id="productType"
+						name="productType"
+						value={productData.productType}
 						onChange={handleInputChange}
-						errors={errors.sku}
-						placeholder="SKU"
-						isSkuNotUnique={isSkuNotUnique}
-						required
+						required>
+						<option value="">Choose product type</option>
+						<option value="DVD">DVD</option>
+						<option value="book">Book</option>
+						<option value="furniture">Furniture</option>
+					</select>
+				</div>
+
+				{productData.productType === 'DVD' && (
+					<DVDinput
+						productData={productData}
+						errors={errors.size}
+						handleInputChange={handleInputChange}
 					/>
+				)}
 
-					<Input
-						type="text"
-						id="name"
-						name="name"
-						value={productData.name}
-						onChange={handleInputChange}
-						errors={errors.name}
-						placeholder="Name"
-						required
+				{productData.productType === 'book' && (
+					<BookInput
+						productData={productData}
+						errors={errors.weight}
+						handleInputChange={handleInputChange}
 					/>
+				)}
 
-					<Input
-						type="number"
-						id="price"
-						name="price"
-						value={productData.price}
-						onChange={handleInputChange}
-						errors={errors.price}
-						placeholder="Price"
-						required
+				{productData.productType === 'furniture' && (
+					<FurnitureInput
+						productData={productData}
+						errors={errors}
+						handleInputChange={handleInputChange}
 					/>
-
-					<div className="mb-3 d-flex">
-						<label className="form-label col-2 my-auto">
-							Type Switcher
-						</label>
-						<select
-							className="form-control w-25"
-							id="productType"
-							name="productType"
-							value={productData.productType}
-							onChange={handleInputChange}
-							required>
-							<option value="">Choose product type</option>
-							<option value="DVD">DVD</option>
-							<option value="book">Book</option>
-							<option value="furniture">Furniture</option>
-						</select>
-					</div>
-
-					{productData.productType === 'DVD' && (
-						<DVDinput
-							productData={productData}
-							errors={errors.size}
-							handleInputChange={handleInputChange}
-						/>
-					)}
-
-					{productData.productType === 'book' && (
-						<BookInput
-							productData={productData}
-							errors={errors.weight}
-							handleInputChange={handleInputChange}
-						/>
-					)}
-
-					{productData.productType === 'furniture' && (
-						<FurnitureInput
-							productData={productData}
-							errors={errors}
-							handleInputChange={handleInputChange}
-						/>
-					)}
-				</form>
-			</div>
-		</>
+				)}
+			</form>
+		</div>
 	);
 }
 

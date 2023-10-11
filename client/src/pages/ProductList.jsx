@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
-import { API_BASE_URL } from '../config';
 import axios from 'axios';
 
 function ProductList({ product }) {
 	const [products, setProducts] = useState([]);
 	const [error, setError] = useState(null);
 
-	const [selectProducts, setSelectProducts] = useState([]);
-
-	function handleDeleteProducts() {}
+	const [selectedProductId, setSelectedProductId] = useState([]);
 
 	// Load products from DB
 
@@ -36,6 +33,43 @@ function ProductList({ product }) {
 		loadProducts();
 	}, []);
 
+	console.log('Selected Product IDs:', selectedProductId);
+
+	const handleCheckboxChange = (productId) => {
+		setSelectedProductId((prevSelectedIds) => {
+			if (prevSelectedIds.includes(productId)) {
+				return prevSelectedIds.filter((id) => id !== productId);
+			} else {
+				return [...prevSelectedIds, productId];
+			}
+		});
+	};
+
+	const deleteProducts = () => {
+		axios
+			.post(
+				'http://scandi-react/index.php?endpoint=/api/delete-products',
+				{ selectedIDs: selectedProductId }
+			)
+			.then((response) => {
+				if (response.data.success) {
+					// Deletion successful
+					loadProducts();
+					console.log('Selected products deleted successfully.');
+				} else {
+					// Handle API error
+					console.error('API error:', response.data.message);
+				}
+			})
+			.catch((error) => {
+				if (error.response) {
+					console.error('API error:', error.response.data);
+				} else {
+					console.error('Error:', error.message);
+				}
+			});
+	};
+
 	return (
 		<>
 			<header>
@@ -46,7 +80,7 @@ function ProductList({ product }) {
 							ADD
 						</Link>
 						<button
-							onClick={handleDeleteProducts}
+							onClick={deleteProducts}
 							className="btn btn-danger"
 							id="delete-product-btn">
 							MASS DELETE
@@ -56,7 +90,12 @@ function ProductList({ product }) {
 			</header>
 			<main className="row px-5">
 				{products.map((product) => (
-					<ProductCard key={product.sku} product={product} />
+					<ProductCard
+						key={product.id}
+						product={product}
+						isSelected={selectedProductId.includes(product.id)}
+						onCheckboxChange={handleCheckboxChange}
+					/>
 				))}
 			</main>
 		</>
