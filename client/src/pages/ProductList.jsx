@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+
+import { loadProducts, deleteProducts } from '../api';
 
 function ProductList({ product }) {
 	const [products, setProducts] = useState([]);
@@ -9,28 +10,15 @@ function ProductList({ product }) {
 
 	const [selectedProductId, setSelectedProductId] = useState([]);
 
-	// Load products from DB
-
-	const loadProducts = async () => {
-		try {
-			const response = await fetch(
-				'http://scandi-react/index.php?endpoint=/api/get-product'
-			);
-			if (!response.ok) {
-				throw new Error(
-					`Request failed with status ${response.status}`
-				);
-			}
-			const data = await response.json();
-			console.log(data);
-			setProducts(data);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-		}
-	};
-
+	// Load products
 	useEffect(() => {
-		loadProducts();
+		loadProducts()
+			.then((data) => {
+				setProducts(data);
+			})
+			.catch((error) => {
+				console.error('Error fetching products:', error);
+			});
 	}, []);
 
 	console.log('Selected Product IDs:', selectedProductId);
@@ -45,29 +33,17 @@ function ProductList({ product }) {
 		});
 	};
 
-	const deleteProducts = () => {
-		axios
-			.post(
-				'http://scandi-react/index.php?endpoint=/api/delete-products',
-				{ selectedIDs: selectedProductId }
-			)
-			.then((response) => {
-				if (response.data.success) {
-					// Deletion successful
-					loadProducts();
-					console.log('Selected products deleted successfully.');
-				} else {
-					// Handle API error
-					console.error('API error:', response.data.message);
-				}
-			})
-			.catch((error) => {
-				if (error.response) {
-					console.error('API error:', error.response.data);
-				} else {
-					console.error('Error:', error.message);
-				}
-			});
+	// Delete products
+	const deleteSelectedProducts = () => {
+		deleteProducts(selectedProductId).then((success) => {
+			if (success) {
+				// Deleted successfull
+				console.log('Selected products were deleted');
+				loadProducts().then((data) => {
+					setProducts(data);
+				});
+			}
+		});
 	};
 
 	return (
@@ -80,7 +56,7 @@ function ProductList({ product }) {
 							ADD
 						</Link>
 						<button
-							onClick={deleteProducts}
+							onClick={deleteSelectedProducts}
 							className="btn btn-danger"
 							id="delete-product-btn">
 							MASS DELETE

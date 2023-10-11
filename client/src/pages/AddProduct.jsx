@@ -6,7 +6,7 @@ import BookInput from '../components/BookInput';
 import FurnitureInput from '../components/FurnitureInput';
 import Button from '../components/Button';
 import { resetErrorsAndProductData } from '../components/ResetFunction';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -38,9 +38,9 @@ function AddProduct() {
 	// - Implement input field value validation, invalid data must trigger notification “Please, provide the data of indicated type”
 
 	const [errors, setErrors] = useState(initialErrors);
-	const [submitted, setSubmitted] = useState(false);
-	const [isSkuNotUnique, setIsSkuNotUnique] = useState(false);
 	const [serverErrors, setServerErrors] = useState({});
+
+	const navigate = useNavigate();
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -90,12 +90,6 @@ function AddProduct() {
 				});
 		}
 	};
-
-	// Cancel and return to homepage
-	const navigate = useNavigate();
-	function onHandleCancel() {
-		navigate('/');
-	}
 
 	useEffect(() => {
 		console.log('Products data:', productData);
@@ -178,11 +172,9 @@ function AddProduct() {
 							label="Save"
 							className="btn btn-primary"
 						/>
-						<Button
-							onClick={onHandleCancel}
-							label="Cancel"
-							className="btn btn-danger"
-						/>
+						<Link to="/" className="btn btn-danger">
+							Cancel
+						</Link>
 					</div>
 				</div>
 			</header>
