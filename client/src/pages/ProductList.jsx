@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router-dom';
+import Header from '../components/Header';
 
 import { loadProducts, deleteProducts } from '../api';
 
@@ -48,22 +49,15 @@ function ProductList({ product }) {
 
 	return (
 		<>
-			<header>
-				<div className="d-flex justify-content-between my-5 px-4 border-bottom border-1 border-secondary">
-					<h2 className="px-4 mb-4">Product List</h2>
-					<div className="btns px-4">
-						<Link to="/add-product" className="btn btn-primary">
-							ADD
-						</Link>
-						<button
-							onClick={deleteSelectedProducts}
-							className="btn btn-danger"
-							id="delete-product-btn">
-							MASS DELETE
-						</button>
-					</div>
-				</div>
-			</header>
+			<Header
+				title="Product List"
+				primary={{ label: 'ADD', link: '/add-product' }}
+				secondary={{
+					label: 'MASS DELETE',
+					onClick: deleteSelectedProducts,
+				}}
+			/>
+
 			<main className="row px-5">
 				{products.map((product) => (
 					<ProductCard

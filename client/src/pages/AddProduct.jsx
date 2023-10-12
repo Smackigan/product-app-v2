@@ -7,6 +7,7 @@ import FurnitureInput from '../components/FurnitureInput';
 import Button from '../components/Button';
 import { resetErrorsAndProductData } from '../components/ResetFunction';
 import { Link, useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 
 import axios from 'axios';
 
@@ -163,21 +164,11 @@ function AddProduct() {
 
 	return (
 		<div className="app">
-			<header>
-				<div className="d-flex justify-content-between my-5 px-4 border-bottom border-1 border-secondary">
-					<h2 className="px-4 mb-4">Product Add</h2>
-					<div className="btns px-4">
-						<Button
-							onClick={onHandleSubmit}
-							label="Save"
-							className="btn btn-primary"
-						/>
-						<Link to="/" className="btn btn-danger">
-							Cancel
-						</Link>
-					</div>
-				</div>
-			</header>
+			<Header
+				title="Product Add"
+				primary={{ label: 'Save', onClick: onHandleSubmit }}
+				secondary={{ label: 'Cancel', link: '/' }}
+			/>
 
 			<form className="ms-5" onSubmit={onHandleSubmit}>
 				<Input
@@ -189,7 +180,6 @@ function AddProduct() {
 					errors={errors.sku}
 					serverErrors={serverErrors.sku}
 					placeholder="SKU"
-					// isSkuNotUnique={isSkuNotUnique}
 					required
 				/>
 
