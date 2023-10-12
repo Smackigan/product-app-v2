@@ -17,6 +17,21 @@ export async function loadProducts() {
 	}
 }
 
+// Add products
+export async function submitProductData(productData) {
+	try {
+		const response = await axios.post(
+			'http://scandi-react/index.php?endpoint=/api/add-product',
+			productData
+		);
+
+		return response.data;
+	} catch (error) {
+		console.error('Error while submitting data:', error);
+		return { success: false, errors: {} };
+	}
+}
+
 // Delete products
 export async function deleteProducts(selectedProductId) {
 	try {

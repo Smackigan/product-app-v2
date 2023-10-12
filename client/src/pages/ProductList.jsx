@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
-import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-
 import { loadProducts, deleteProducts } from '../api';
 
-function ProductList({ product }) {
+function ProductList() {
 	const [products, setProducts] = useState([]);
-	const [error, setError] = useState(null);
-
 	const [selectedProductId, setSelectedProductId] = useState([]);
 
 	// Load products
@@ -22,8 +18,7 @@ function ProductList({ product }) {
 			});
 	}, []);
 
-	console.log('Selected Product IDs:', selectedProductId);
-
+	// Select checkboxes
 	const handleCheckboxChange = (productId) => {
 		setSelectedProductId((prevSelectedIds) => {
 			if (prevSelectedIds.includes(productId)) {
@@ -39,7 +34,6 @@ function ProductList({ product }) {
 		deleteProducts(selectedProductId).then((success) => {
 			if (success) {
 				// Deleted successfull
-				console.log('Selected products were deleted');
 				loadProducts().then((data) => {
 					setProducts(data);
 				});

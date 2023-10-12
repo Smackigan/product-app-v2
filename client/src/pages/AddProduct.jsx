@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { submitProductData } from '../api';
 import { validateInput } from '../validators/Validation';
 import Input from '../components/Input';
-import DVDinput from '../components/DVDinput';
-import BookInput from '../components/BookInput';
-import FurnitureInput from '../components/FurnitureInput';
-import Button from '../components/Button';
-import { resetErrorsAndProductData } from '../components/ResetFunction';
-import { Link, useNavigate } from 'react-router-dom';
+import {
+	resetErrorsForProductType,
+	resetProductDataForProductType,
+} from '../components/resetFunction';
 import Header from '../components/Header';
-
-import axios from 'axios';
+import ProductTypeInput from '../components/ProductTypeInput';
+import { productTypeMeta } from '../components/productTypeMeta';
 
 function AddProduct() {
 	const [productData, setProductData] = useState({
@@ -35,9 +35,6 @@ function AddProduct() {
 		length: '',
 	};
 
-	// - All fields are mandatory for submission, missing values should trigger notification “Please, submit required data”
-	// - Implement input field value validation, invalid data must trigger notification “Please, provide the data of indicated type”
-
 	const [errors, setErrors] = useState(initialErrors);
 	const [serverErrors, setServerErrors] = useState({});
 
@@ -45,7 +42,6 @@ function AddProduct() {
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		// console.log(e.target);
 
 		// Validate the input based on the field name
 		const validation = validateInput(name, value);
@@ -53,7 +49,8 @@ function AddProduct() {
 		// Update the errors state with the validation result
 		setErrors({ ...errors, [name]: validation });
 
-		resetProductDataForProductType(productData.productType);
+		// Reset the product type state
+		handleProductTypeChange(productData.productType);
 
 		// Update the productData state with the new input value
 		setProductData((prevProductData) => ({
@@ -62,7 +59,7 @@ function AddProduct() {
 		}));
 	};
 
-	// Save btn. Submit data to API
+	// Click save btn. Add products
 	const onHandleSubmit = async (event) => {
 		event.preventDefault();
 
@@ -70,96 +67,38 @@ function AddProduct() {
 		const hasErrors = Object.values(errors).some((error) => error !== '');
 
 		if (!hasErrors) {
-			axios
-				.post(
-					'http://scandi-react/index.php?endpoint=/api/add-product',
-					productData
-				)
-				.then((response) => {
-					console.log('Response from server:', response.data);
-					console.log(response.data.success);
+			const response = await submitProductData(productData);
+			console.log('Response from server:', response);
 
-					if (response.data.success) {
-						setServerErrors({});
-						navigate('/');
-					} else {
-						setServerErrors(response.data.errors || {});
-					}
-				})
-				.catch((error) => {
-					console.error('Error while submitting data:', error);
-				});
+			if (response.success) {
+				setServerErrors({});
+				navigate('/');
+			} else {
+				setServerErrors(response.errors || {});
+			}
 		}
 	};
 
-	useEffect(() => {
-		console.log('Products data:', productData);
-	}, [productData]);
+	// useEffect(() => {
+	// 	console.log('Products data:', productData);
+	// }, [productData]);
 
-	useEffect(() => {
-		console.log('Errors array:', errors);
-	}, [errors]);
+	// useEffect(() => {
+	// 	console.log('Errors array:', errors);
+	// }, [errors]);
 
-	const resetErrorsForProductType = (productType) => {
-		const updatedErrors = { ...errors };
-		switch (productType) {
-			case 'DVD':
-				updatedErrors.weight = '';
-				updatedErrors.height = '';
-				updatedErrors.width = '';
-				updatedErrors.length = '';
-				break;
-			case 'book':
-				updatedErrors.size = '';
-				updatedErrors.height = '';
-				updatedErrors.width = '';
-				updatedErrors.length = '';
-				break;
-			case 'furniture':
-				updatedErrors.size = '';
-				updatedErrors.weight = '';
-				break;
-			default:
-				break;
-		}
-		setErrors(updatedErrors);
-	};
-
+	// Reset product type errors messages
 	useEffect(() => {
-		const resetErrors = () => {
-			resetErrorsForProductType(productData.productType);
-		};
-		resetErrors();
+		setErrors((prevErrors) =>
+			resetErrorsForProductType(productData.productType, prevErrors)
+		);
 	}, [productData.productType]);
 
 	// Reset the product data inputs state
-	const resetProductDataForProductType = (productType) => {
-		setProductData((prevProductData) => {
-			const updatedProductData = { ...prevProductData };
-
-			switch (productType) {
-				case 'DVD':
-					updatedProductData.weight = '';
-					updatedProductData.height = '';
-					updatedProductData.width = '';
-					updatedProductData.length = '';
-					break;
-				case 'book':
-					updatedProductData.size = '';
-					updatedProductData.height = '';
-					updatedProductData.width = '';
-					updatedProductData.length = '';
-					break;
-				case 'furniture':
-					updatedProductData.size = '';
-					updatedProductData.weight = '';
-					break;
-				default:
-					break;
-			}
-
-			return updatedProductData;
-		});
+	const handleProductTypeChange = (newProductType) => {
+		setProductData((prevProductData) =>
+			resetProductDataForProductType(newProductType, prevProductData)
+		);
 	};
 
 	return (
@@ -226,29 +165,35 @@ function AddProduct() {
 				</div>
 
 				{productData.productType === 'DVD' && (
-					<DVDinput
+					<ProductTypeInput
+						productTypeMeta={productTypeMeta}
+						productType="DVD"
 						productData={productData}
-						errors={errors.size}
-						serverErrors={serverErrors.size}
+						errors={errors}
 						handleInputChange={handleInputChange}
+						serverErrors={serverErrors}
 					/>
 				)}
 
 				{productData.productType === 'book' && (
-					<BookInput
+					<ProductTypeInput
+						productTypeMeta={productTypeMeta}
+						productType="book"
 						productData={productData}
-						errors={errors.weight}
-						serverErrors={serverErrors.weight}
+						errors={errors}
 						handleInputChange={handleInputChange}
+						serverErrors={serverErrors}
 					/>
 				)}
 
 				{productData.productType === 'furniture' && (
-					<FurnitureInput
+					<ProductTypeInput
+						productTypeMeta={productTypeMeta}
+						productType="furniture"
 						productData={productData}
 						errors={errors}
-						serverErrors={serverErrors}
 						handleInputChange={handleInputChange}
+						serverErrors={serverErrors}
 					/>
 				)}
 			</form>
