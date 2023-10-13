@@ -3,9 +3,7 @@ import axios from 'axios';
 // Load products
 export async function loadProducts() {
 	try {
-		const response = await axios.get(
-			'http://scandi-react/index.php?endpoint=/api/get-product'
-		);
+		const response = await axios.get('http://scandi-react/api/get-product');
 
 		if (response.status === 200) {
 			return response.data;
@@ -21,7 +19,7 @@ export async function loadProducts() {
 export async function submitProductData(productData) {
 	try {
 		const response = await axios.post(
-			'http://scandi-react/index.php?endpoint=/api/add-product',
+			'http://scandi-react/api/add-product',
 			productData
 		);
 
@@ -35,10 +33,12 @@ export async function submitProductData(productData) {
 // Delete products
 export async function deleteProducts(selectedProductId) {
 	try {
-		const response = await axios.post(
-			'http://scandi-react/index.php?endpoint=/api/delete-products',
+		const response = await axios.delete(
+			'http://scandi-react/api/delete-products',
 			{
-				selectedIDs: selectedProductId,
+				data: {
+					selectedIDs: selectedProductId,
+				},
 			}
 		);
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import Header from '../components/Header';
 import { loadProducts, deleteProducts } from '../api';
@@ -6,6 +7,12 @@ import { loadProducts, deleteProducts } from '../api';
 function ProductList() {
 	const [products, setProducts] = useState([]);
 	const [selectedProductId, setSelectedProductId] = useState([]);
+	const navigate = useNavigate();
+
+	// Navigation to add-product page
+	const navigateToAddProduct = () => {
+		navigate('/add-product');
+	};
 
 	// Load products
 	useEffect(() => {
@@ -45,8 +52,8 @@ function ProductList() {
 		<>
 			<Header
 				title="Product List"
-				primary={{ label: 'ADD', link: '/add-product' }}
-				secondary={{
+				primaryButton={{ label: 'ADD', onClick: navigateToAddProduct }}
+				secondaryButton={{
 					label: 'MASS DELETE',
 					onClick: deleteSelectedProducts,
 				}}

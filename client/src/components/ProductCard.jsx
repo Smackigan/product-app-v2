@@ -1,8 +1,8 @@
 function ProductCard({ product, isSelected, onCheckboxChange }) {
 	return (
-		<div className="col-md-3 p-4 mb-4">
+		<div className="col-md-3 mb-4">
 			<div className="border border-2">
-				<div className="card-body p-4 pb-5">
+				<div className="card-body p-2 pb-5 pt-3">
 					<div className="form-check-inline">
 						<label className="form-check-inline">
 							<input

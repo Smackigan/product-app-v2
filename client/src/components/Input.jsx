@@ -7,9 +7,7 @@ function Input({
 	value,
 	onChange,
 	errors,
-	submitted,
 	placeholder,
-	isSkuNotUnique,
 	serverErrors,
 }) {
 	const displayErrors = errors || serverErrors;

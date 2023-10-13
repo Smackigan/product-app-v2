@@ -37,8 +37,12 @@ function AddProduct() {
 
 	const [errors, setErrors] = useState(initialErrors);
 	const [serverErrors, setServerErrors] = useState({});
-
 	const navigate = useNavigate();
+
+	// Navigation to home page
+	const navigateToHome = () => {
+		navigate('/');
+	};
 
 	// Get data from inputs
 	const handleInputChange = (e) => {
@@ -98,8 +102,11 @@ function AddProduct() {
 		<div className="app">
 			<Header
 				title="Product Add"
-				primary={{ label: 'Save', onClick: onHandleSubmit }}
-				secondary={{ label: 'Cancel', link: '/' }}
+				primaryButton={{ label: 'Save', onClick: onHandleSubmit }}
+				secondaryButton={{
+					label: 'Cancel',
+					onClick: navigateToHome,
+				}}
 			/>
 
 			<form className="ms-5" onSubmit={onHandleSubmit}>
