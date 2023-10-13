@@ -40,6 +40,7 @@ function AddProduct() {
 
 	const navigate = useNavigate();
 
+	// Get data from inputs
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 
@@ -78,14 +79,6 @@ function AddProduct() {
 			}
 		}
 	};
-
-	// useEffect(() => {
-	// 	console.log('Products data:', productData);
-	// }, [productData]);
-
-	// useEffect(() => {
-	// 	console.log('Errors array:', errors);
-	// }, [errors]);
 
 	// Reset product type errors messages
 	useEffect(() => {

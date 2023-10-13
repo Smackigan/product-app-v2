@@ -1,20 +1,14 @@
-const productTypeResetConfig = {
-	DVD: ['weight', 'height', 'width', 'length'],
-	book: ['size', 'height', 'width', 'length'],
-	furniture: ['size', 'weight'],
-};
+import { productTypeMeta } from './productTypeMeta';
 
 // Reset product type error messages
 export const resetErrorsForProductType = (productType, currentErrors) => {
 	const updatedErrors = { ...currentErrors };
 
-	const fieldsToReset = productTypeResetConfig[productType];
+	const fieldsToReset = productTypeMeta[productType]?.errorFields || [];
 
-	if (fieldsToReset) {
-		fieldsToReset.forEach((field) => {
-			updatedErrors[field] = '';
-		});
-	}
+	fieldsToReset.forEach((field) => {
+		updatedErrors[field] = '';
+	});
 
 	return updatedErrors;
 };
@@ -26,13 +20,11 @@ export const resetProductDataForProductType = (
 ) => {
 	const updatedProductData = { ...currentProductData };
 
-	const fieldsToReset = productTypeResetConfig[productType];
+	const fieldsToReset = productTypeMeta[productType]?.errorFields || [];
 
-	if (fieldsToReset) {
-		fieldsToReset.forEach((field) => {
-			updatedProductData[field] = '';
-		});
-	}
+	fieldsToReset.forEach((field) => {
+		updatedProductData[field] = '';
+	});
 
 	return updatedProductData;
 };
