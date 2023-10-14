@@ -1,9 +1,10 @@
 import axios from 'axios';
+import API_BASE_URL from './config';
 
 // Load products
 export async function loadProducts() {
 	try {
-		const response = await axios.get('http://scandi-react/api/get-product');
+		const response = await axios.get(`${API_BASE_URL}/get-product`);
 
 		if (response.status === 200) {
 			return response.data;
@@ -19,7 +20,7 @@ export async function loadProducts() {
 export async function submitProductData(productData) {
 	try {
 		const response = await axios.post(
-			'http://scandi-react/api/add-product',
+			`${API_BASE_URL}/add-product`,
 			productData
 		);
 
@@ -33,14 +34,11 @@ export async function submitProductData(productData) {
 // Delete products
 export async function deleteProducts(selectedProductId) {
 	try {
-		const response = await axios.delete(
-			'http://scandi-react/api/delete-products',
-			{
-				data: {
-					selectedIDs: selectedProductId,
-				},
-			}
-		);
+		const response = await axios.delete(`${API_BASE_URL}/delete-products`, {
+			data: {
+				selectedIDs: selectedProductId,
+			},
+		});
 
 		if (response.data.success) {
 			// Deletion successful
