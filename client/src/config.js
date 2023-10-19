@@ -1,1 +1,3 @@
-const API_BASE_URL = 'http://scandi-react/api';
+const API_BASE_URL = 'https://jeanpaul.site/api';
+
+export default API_BASE_URL;

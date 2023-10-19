@@ -59,15 +59,17 @@ function ProductList() {
 				}}
 			/>
 
-			<main className="row px-5">
-				{products.map((product) => (
-					<ProductCard
-						key={product.id}
-						product={product}
-						isSelected={selectedProductId.includes(product.id)}
-						onCheckboxChange={handleCheckboxChange}
-					/>
-				))}
+			<main className="container">
+				<div className="row">
+					{products.map((product) => (
+						<ProductCard
+							key={product.id}
+							product={product}
+							isSelected={selectedProductId.includes(product.id)}
+							onCheckboxChange={handleCheckboxChange}
+						/>
+					))}
+				</div>
 			</main>
 		</>
 	);

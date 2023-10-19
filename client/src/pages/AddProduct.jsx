@@ -73,7 +73,6 @@ function AddProduct() {
 
 		if (!hasErrors) {
 			const response = await submitProductData(productData);
-			console.log('Response from server:', response);
 
 			if (response.success) {
 				setServerErrors({});
@@ -109,7 +108,7 @@ function AddProduct() {
 				}}
 			/>
 
-			<form className="ms-5" onSubmit={onHandleSubmit}>
+			<form className="ms-5" id="product_form" onSubmit={onHandleSubmit}>
 				<Input
 					type="text"
 					id="sku"
